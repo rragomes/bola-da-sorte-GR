@@ -38,7 +38,7 @@ const APOSTADOR_SECRET_KEY = process.env.APOSTADOR_SECRET_KEY;
 app.use(cors({
     origin: ['https://boladasorte.vercel.app', 'http://localhost:3000'],
     credentials: true
-  }));i
+  }));
 
   
 app.use(bodyParser.json());

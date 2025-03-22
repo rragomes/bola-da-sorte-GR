@@ -374,7 +374,7 @@ app.post(
 );
 
 // Rota de login modificada para usar sessões separadas
-app.post("/login", (req, res) => {
+app.post("api/login", (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {

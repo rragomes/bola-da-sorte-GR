@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin - Visualizar Apostas</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      color: #333;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #4CAF50;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+    }
+
+    .btn-voltar {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 20px 0;
+    }
+
+    .btn-voltar:hover {
+      background-color: #0056b3;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+</head>
+
+<body>
+  <h1>Visualização de Apostas</h1>
+  <div id="error-message" class="error"></div>
+  <button id="exportar-apostas">Exportar para XLSX</button>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Usuário</th>
+        <th>Opções</th>
+        <th>Valor Total</th>
+      </tr>
+    </thead>
+    <tbody id="tabela-apostas"></tbody>
+
+    <div id="totais-usuarios"></div>
+    <button id="voltar-login" class="btn-voltar">Voltar para Login</button>
+
+  </table>
+
+  <script>
+
+    document.getElementById("voltar-login").addEventListener("click", () => {
+      window.location.href = "index.html"; // botão para voltar na tela de login
+    });
+
+
+    async function carregarApostas() {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        document.getElementById("error-message").textContent = "Token de autenticação não encontrado. Por favor, faça login novamente.";
+        console.log("Erro: Token não encontrado no localStorage.");
+        return;
+      }
+
+      try {
+        console.log("Iniciando requisição para o backend...");
+
+        const response = await fetch("http://localhost:3001/apostas", {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        console.log("Resposta da API:", response);
+
+        if (!response.ok) {
+          throw new Error(`Erro ao buscar as apostas: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log("Dados recebidos do backend:", data);
+
+        if (!data.apostas) {
+          throw new Error("Resposta da API mal formatada: 'apostas' não encontrado");
+        }
+
+        const tabelaBody = document.getElementById("tabela-apostas");
+        tabelaBody.innerHTML = "";
+
+        // Objeto para somar os valores por usuário
+        const valoresPorUsuario = {};
+
+        data.apostas.forEach((aposta) => {
+          console.log("Processando aposta:", aposta);
+
+          const opcoes = Array.isArray(aposta.opcoes) ? aposta.opcoes : [];
+          const valorTotal = !isNaN(Number(aposta.valor_total)) ? Number(aposta.valor_total) : 0;
+
+          // Atualizar o total acumulado por usuário
+          if (!valoresPorUsuario[aposta.user_name]) {
+            valoresPorUsuario[aposta.user_name] = 0;
+          }
+          valoresPorUsuario[aposta.user_name] += valorTotal;
+
+          // Adicionar a aposta na tabela
+          const linha = document.createElement("tr");
+          linha.innerHTML = `
+                <td>${aposta.id}</td>
+                <td>${aposta.user_name}</td>
+                <td>${opcoes.map(opcoesJogo => opcoesJogo.join(", ")).join("; ")}</td>
+                <td>R$ ${valorTotal.toFixed(2)}</td>
+            `;
+          tabelaBody.appendChild(linha);
+        });
+
+        console.log("Valores por usuário calculados:", valoresPorUsuario);
+
+        // Exibir os totais por usuário
+        const totaisUsuariosDiv = document.getElementById("totais-usuarios");
+        totaisUsuariosDiv.innerHTML = "<h3>Totais por Usuário:</h3>";
+
+        Object.entries(valoresPorUsuario).forEach(([usuario, total]) => {
+          const paragrafo = document.createElement("p");
+          paragrafo.textContent = `${usuario}: R$ ${total.toFixed(2)}`;
+          totaisUsuariosDiv.appendChild(paragrafo);
+        });
+
+        console.log("Apostas carregadas e exibidas com sucesso.");
+      } catch (error) {
+        console.error("Erro ao carregar apostas:", error);
+        document.getElementById("error-message").textContent = `Erro: ${error.message}. Verifique se o servidor está rodando e se você tem permissão para acessar os dados.`;
+      }
+    }
+
+    window.onload = carregarApostas;
+
+    function gerarDesdobramentos(opcoes) {
+      if (opcoes.length === 0) return [[]];
+
+      const primeiroJogo = opcoes[0];
+      const restoDesdobrado = gerarDesdobramentos(opcoes.slice(1));
+
+      let resultado = [];
+      primeiroJogo.split(", ").forEach(opcao => {
+        restoDesdobrado.forEach(combinacao => {
+          resultado.push([opcao, ...combinacao]);
+        });
+      });
+      return resultado;
+    }
+
+    document.getElementById("exportar-apostas").addEventListener("click", function () {
+    const dadosExportacao = [["Apostador", "Desdobramentos", "Valor Total"]];
+    const linhas = document.querySelectorAll("#tabela-apostas tr");
+
+    linhas.forEach(linha => {
+        const colunas = linha.querySelectorAll("td");
+        if (colunas.length >= 4) { // Verifica se tem todas as colunas necessárias
+            const usuario = colunas[1].innerText;
+            const opcoesTexto = colunas[2].innerText; // Pegando a coluna correta das opções
+            const valorTotal = colunas[3].innerText;
+
+            // Divide as opções em jogos separados
+            const jogos = opcoesTexto.split("; ").map(jogo => jogo.split(", "));
+
+            // Função para gerar todas as combinações possíveis
+            function gerarCombinacoes(jogos, indiceAtual = 0, combinacaoAtual = []) {
+                if (indiceAtual === jogos.length) {
+                    dadosExportacao.push([usuario, combinacaoAtual.join(" - "), valorTotal]);
+                    return;
+                }
+
+                for (let opcao of jogos[indiceAtual]) {
+                    gerarCombinacoes(jogos, indiceAtual + 1, [...combinacaoAtual, opcao]);
+                }
+            }
+
+            // Gera todas as combinações possíveis para este usuário
+            gerarCombinacoes(jogos);
+            
+            // Adiciona uma linha em branco entre diferentes apostadores
+            dadosExportacao.push(["", "", ""]);
+        }
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(dadosExportacao);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Apostas");
+    XLSX.writeFile(wb, "apostas.xlsx");
+});
+
+  </script>
+
+</body>
+
+</html>

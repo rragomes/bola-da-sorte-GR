@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet">
+    <title>BOLA DA SORTE</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eef4f2;
+            color: #0a0a0a;
+            padding: 20px;
+            padding-bottom: 80px;
+
+            background-image: url('/imagens/background.png');
+            background-size: cover;
+            /* Cobre toda a área */
+            background-position: center;
+            /* Centraliza a imagem */
+            background-repeat: no-repeat;
+            /* Não repete a imagem */
+            background-attachment: fixed;
+            /* Imagem fica fixa ao rolar */
+        }
+
+        h1 {
+            text-align: center;
+            color: #104212;
+            margin-bottom: 50px;
+        }
+
+        p {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 25px;
+        }
+
+        #saudacao {
+            text-align: center;
+            font-size: 25px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #jogos {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .jogo {
+            background-image: linear-gradient(45deg, #44d26f, #1f8e4b);
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            width: 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .time-visitante {
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .time-casa {
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+            margin-top: 10px;
+        }
+
+        .linha-jogo {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 10px;
+        }
+
+        .escudo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin: 0 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .escudo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .opcoes-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            flex: 1;
+        }
+
+        .botao {
+            background-color: #f4f4f9;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 8px 12px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .botao:hover {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+
+        .selecionado {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        #calcular {
+            display: block;
+            margin: 20px auto;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #calcular:hover {
+            background-color: #45a049;
+        }
+
+        .resultado {
+            background-color: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .resultado p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .resultado h3 {
+            font-size: 20px;
+            color: #4CAF50;
+        }
+
+        .btn-carregar {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #faf4f4;
+            background-color: #007bff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn-carregar:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+
+        .btn-carregar:active {
+            background-color: #003f8a;
+            transform: scale(0.98);
+        }
+
+        #botao-sair {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #botao-sair:hover {
+            background-color: #ff0011;
+        }
+
+        #ver-apostas {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #ver-apostas:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            .jogo {
+                width: 100%;
+                max-width: 320px;
+            }
+
+            .escudo {
+                width: 35px;
+                height: 35px;
+            }
+
+            .botao {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+        }
+
+        h1 {
+            font-family: 'Lilita One', cursive;
+            text-align: center;
+            color: #44d26f;
+            margin-bottom: 50px;
+            font-size: 3.5em;
+            text-shadow: 2px 2px 4px rgba(22, 86, 51, 0.3),
+                0 0 10px #205c22;
+            letter-spacing: 2px;
+            padding: 10px;
+            transform: scale(1);
+            transition: transform 0.3s ease;
+        }
+
+        h1:hover {
+            transform: scale(1.05);
+            color: #104212;
+        }
+
+        .info-bloco {
+            background-color: rgba(255, 255, 255, 0.3);
+            /* Fundo branco com transparência */
+            backdrop-filter: blur(8px);
+            /* Desfoca o fundo */
+            -webkit-backdrop-filter: blur(8px);
+            /* Suporte para navegadores baseados em WebKit */
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            /* Borda sutil */
+            border-radius: 8px;
+            /* Bordas arredondadas */
+            padding: 16px;
+            /* Espaçamento interno */
+            margin: 16px 0;
+            /* Espaçamento externo */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            /* Sombra leve */
+            font-size: 16px;
+            /* Tamanho da fonte */
+            color: #333;
+            /* Cor do texto */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="info-bloco">
+        <h1>BOLA DA SORTE</h1>
+        <p id="saudacao"></p>
+        <p>Selecione os resultados para cada jogo. O custo será calculado automaticamente com base nas combinações.</p>
+    </div>
+
+    <div id="jogos"></div>
+
+    <button id="calcular">Calcular Aposta</button>
+
+    <div class="resultado" id="resultado"></div>
+
+    <button id="ver-apostas" onclick="irParaApostas()">Ver Minhas Apostas</button>
+
+    <button id="botao-sair" onclick="sair()">Sair</button>
+
+    <script>
+        function sair() {
+            try {
+                localStorage.removeItem("token");
+                window.location.href = "index.html";
+            } catch (error) {
+                console.error("Erro ao tentar sair:", error);
+                alert("Ocorreu um erro ao sair. Tente novamente.");
+            }
+        }
+
+        function irParaApostas() {
+            window.location.href = "minhas_apostas.html";
+        }
+
+        const tipoUsuario = localStorage.getItem("tipo");
+        const token = localStorage.getItem("token");
+
+        // Verificação de autenticação
+        if (!token) {
+            console.log("Token não encontrado!");
+            window.location.href = "index.html";
+        } else {
+            try {
+                // Tentativa de decodificar o token
+                const decodedToken = JSON.parse(atob(token.split(".")[1]));
+                const tipoUsuario = decodedToken.tipo;
+                console.log("Tipo de usuário:", tipoUsuario);
+            } catch (error) {
+                console.error("Erro ao decodificar token:", error);
+            }
+        }
+
+        const firstName = localStorage.getItem("firstName");
+        const lastName = localStorage.getItem("lastName");
+
+        const saudacaoElement = document.getElementById("saudacao");
+        if (firstName && lastName) {
+            saudacaoElement.textContent = `Bem-vindo(a), ${firstName} ${lastName}!`;
+        } else {
+            saudacaoElement.textContent = "Bem-vindo(a)!";
+        }
+
+        const jogos = [
+            ["Cruzeiro", "Atlético-GO"],
+            ["América", "Flamengo"],
+            ["Palmeiras", "Corinthians"],
+            ["Grêmio", "Internacional"],
+            ["São Paulo", "Santos"],
+            ["Vasco", "Botafogo"],
+            ["Fluminense", "Bahia"],
+            ["Atlético-MG", "Fortaleza"],
+            ["Athletico-PR", "Ceará"],
+            ["Coritiba", "Goiás"]
+        ];
+
+        const escudosTimes = {
+            "Cruzeiro": "https://logodetimes.com/times/cruzeiro/logo-cruzeiro-256.png",
+            "Atlético-GO": "https://logodetimes.com/times/atletico-goianiense/logo-atletico-goianiense-256.png",
+            "América": "https://logodetimes.com/times/america-mineiro/logo-america-mineiro-256.png",
+            "Flamengo": "https://logodetimes.com/times/flamengo/logo-flamengo-256.png",
+            "Palmeiras": "https://logodetimes.com/times/palmeiras/logo-palmeiras-256.png",
+            "Corinthians": "https://logodetimes.com/times/corinthians/logo-corinthians-256.png",
+            "Grêmio": "https://logodetimes.com/times/gremio/logo-gremio-256.png",
+            "Internacional": "https://logodetimes.com/times/internacional/logo-internacional-256.png",
+            "São Paulo": "https://logodetimes.com/times/sao-paulo/logo-sao-paulo-256.png",
+            "Santos": "https://logodetimes.com/times/santos/logo-santos-256.png",
+            "Vasco": "https://logodetimes.com/times/vasco-da-gama/logo-vasco-da-gama-256.png",
+            "Botafogo": "https://logodetimes.com/times/botafogo/logo-botafogo-256.png",
+            "Fluminense": "https://logodetimes.com/times/fluminense/logo-fluminense-256.png",
+            "Bahia": "https://logodetimes.com/times/bahia/logo-bahia-256.png",
+            "Atlético-MG": "https://logodetimes.com/times/atletico-mineiro/logo-atletico-mineiro-256.png",
+            "Fortaleza": "https://logodetimes.com/times/fortaleza/logo-fortaleza-256.png",
+            "Athletico-PR": "https://logodetimes.com/times/atletico-paranaense/logo-atletico-paranaense-256.png",
+            "Ceará": "https://logodetimes.com/times/ceara/logo-ceara-256.png",
+            "Coritiba": "https://logodetimes.com/times/coritiba/logo-coritiba-256.png",
+            "Goiás": "https://logodetimes.com/times/goias/logo-goias-esporte-clube-256.png"
+        };
+
+        const escolhas = {};
+        const VALOR_BASE = 10;
+        const jogosContainer = document.getElementById("jogos");
+
+        jogos.forEach((jogo, index) => {
+            const jogoDiv = document.createElement("div");
+            jogoDiv.classList.add("jogo");
+
+            // Time Visitante (em cima)
+            const timeVisitante = document.createElement("div");
+            timeVisitante.textContent = jogo[1];
+            timeVisitante.classList.add("time-visitante");
+            jogoDiv.appendChild(timeVisitante);
+
+            // Linha do jogo (escudos e botões)
+            const linhaJogo = document.createElement("div");
+            linhaJogo.classList.add("linha-jogo");
+
+            // Escudo do time visitante
+            const escudoVisitante = document.createElement("div");
+            escudoVisitante.classList.add("escudo");
+            const imgVisitante = document.createElement("img");
+            imgVisitante.src = escudosTimes[jogo[1]];
+            imgVisitante.alt = `Escudo ${jogo[1]}`;
+            escudoVisitante.appendChild(imgVisitante);
+            linhaJogo.appendChild(escudoVisitante);
+
+            // Container para os botões
+            const opcoesContainer = document.createElement("div");
+            opcoesContainer.classList.add("opcoes-container");
+
+            ["1", "X", "2"].forEach(opcao => {
+                const botao = document.createElement("button");
+                botao.classList.add("botao");
+                botao.textContent = opcao;
+
+                botao.addEventListener("click", () => {
+                    const jogoKey = `${jogo[0]} vs ${jogo[1]}`;
+
+                    if (!escolhas[jogoKey]) {
+                        escolhas[jogoKey] = [];
+                    }
+
+                    if (escolhas[jogoKey].includes(opcao)) {
+                        escolhas[jogoKey] = escolhas[jogoKey].filter(o => o !== opcao);
+                        botao.classList.remove("selecionado");
+                    } else {
+                        escolhas[jogoKey].push(opcao);
+                        botao.classList.add("selecionado");
+                    }
+                });
+
+                opcoesContainer.appendChild(botao);
+            });
+
+            linhaJogo.appendChild(opcoesContainer);
+
+            // Escudo do time da casa
+            const escudoCasa = document.createElement("div");
+            escudoCasa.classList.add("escudo");
+            const imgCasa = document.createElement("img");
+            imgCasa.src = escudosTimes[jogo[0]];
+            imgCasa.alt = `Escudo ${jogo[0]}`;
+            escudoCasa.appendChild(imgCasa);
+            linhaJogo.appendChild(escudoCasa);
+
+            jogoDiv.appendChild(linhaJogo);
+
+            // Time Casa (embaixo)
+            const timeCasa = document.createElement("div");
+            timeCasa.textContent = jogo[0];
+            timeCasa.classList.add("time-casa");
+            jogoDiv.appendChild(timeCasa);
+
+            jogosContainer.appendChild(jogoDiv);
+        });
+
+        function calcularCustoTotal() {
+            let multiplicador = 1;
+            let temDuplaOuTripla = false;
+
+            Object.values(escolhas).forEach(opcoes => {
+                if (opcoes.length === 2) {
+                    multiplicador *= 2; // Dupla multiplica por 2
+                    temDuplaOuTripla = true;
+                } else if (opcoes.length === 3) {
+                    multiplicador *= 3; // Tripla multiplica por 3
+                    temDuplaOuTripla = true;
+                }
+            });
+
+            // Se não tiver dupla ou tripla, retorna apenas o valor base
+            if (!temDuplaOuTripla) {
+                return 10;
+            }
+
+            return 10 * multiplicador;
+        }
+
+        function exibirResultado() {
+            const resultadoDiv = document.getElementById("resultado");
+            resultadoDiv.innerHTML = "";
+
+            const custoTotal = calcularCustoTotal();
+
+            const valorTotal = document.createElement("p");
+            valorTotal.textContent = `Valor total da aposta: R$${custoTotal.toFixed(2)}`;
+            resultadoDiv.appendChild(valorTotal);
+
+            const apostas = document.createElement("div");
+            apostas.innerHTML = "<h3>Apostas Realizadas:</h3>";
+
+            const apostasArray = [];
+
+            Object.keys(escolhas).forEach((jogo) => {
+                if (escolhas[jogo].length > 0) {
+                    const aposta = document.createElement("p");
+                    aposta.textContent = `${jogo}: ${escolhas[jogo].join(", ")}`;
+                    apostas.appendChild(aposta);
+
+                    apostasArray.push({
+                        jogo: jogo,
+                        opcoes: escolhas[jogo],
+                    });
+                }
+            });
+
+            resultadoDiv.appendChild(apostas);
+
+            if (apostasArray.length === 0) {
+                alert("Nenhuma aposta foi realizada.");
+                return;
+            }
+
+            const dadosApostador = {
+                apostas: apostasArray,
+                valor_total: custoTotal,
+            };
+
+            console.log("Payload enviado:", dadosApostador);
+            enviarApostas(dadosApostador);
+        }
+
+        const enviarApostas = async (dadosApostador) => {
+            try {
+                const token = localStorage.getItem("token");
+                if (!token) {
+                    alert("Você não está autenticado. Faça login novamente.");
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                console.log("Token enviado:", token);
+                console.log("Payload enviado:", dadosApostador);
+
+                // Ajustado para usar a rota da API no Vercel
+                const response = await fetch("/api/apostas", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify(dadosApostador),
+                });
+
+                console.log("Resposta do servidor:", response);
+
+                if (!response.ok) {
+                    throw new Error("Erro ao salvar as apostas.");
+                }
+
+                const data = await response.json();
+                console.log("Aposta salva com sucesso:", data);
+                alert("Aposta salva com sucesso!");
+                window.location.reload();
+            } catch (error) {
+                console.error("Erro ao enviar as apostas:", error);
+                alert("Ocorreu um erro ao salvar suas apostas. Tente novamente.");
+            }
+        };
+
+        document.getElementById("calcular").addEventListener("click", exibirResultado);
+    </script>
+</body>
+
+</html>

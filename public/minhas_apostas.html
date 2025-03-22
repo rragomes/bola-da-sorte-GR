@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Apostas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .btn-excluir {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-excluir:hover {
+            background-color: #e60000;
+        }
+
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 30px;
+        }
+
+        .aposta-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .aposta-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .aposta-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .aposta-id {
+            font-weight: bold;
+            color: #4CAF50;
+            font-size: 1.1em;
+        }
+
+        .aposta-valor {
+            color: #007bff;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .jogos-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .jogo-item {
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            padding: 15px;
+            flex: 1 1 300px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .escudo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .escudo img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .jogo-info {
+            flex: 1;
+        }
+
+        .times {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .opcoes {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .total-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin: 30px 0;
+            text-align: right;
+        }
+
+        .total-valor {
+            font-size: 1.5em;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .botoes {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 6px;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-voltar {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-voltar:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-pagar {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn-pagar:hover {
+            background-color: #45a049;
+        }
+
+        .sem-apostas {
+            text-align: center;
+            padding: 40px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .modal-pix {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .pix-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .pix-valor {
+            font-size: 24px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .pix-chave {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .pix-numero {
+            flex: 1;
+            font-family: monospace;
+            font-size: 16px;
+            color: #333;
+            word-break: break-all;
+        }
+
+        .copiar-pix {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .copiar-pix:hover {
+            background-color: #45a049;
+        }
+
+        .copied-message {
+            color: #4CAF50;
+            font-size: 14px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .aposta-card {
+                padding: 15px;
+            }
+
+            .jogo-item {
+                flex: 1 1 100%;
+            }
+
+            .botoes {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .aposta-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+
+            .modal-content {
+                margin: 20px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Minhas Apostas</h1>
+        <div id="apostas-container">
+            <!-- As apostas serão inseridas aqui dinamicamente -->
+        </div>
+        <div class="total-container">
+            <div class="total-valor" id="valor-total">Total: R$ 0,00</div>
+        </div>
+        <div class="botoes">
+            <button class="btn btn-voltar" onclick="voltarParaApostas()">Voltar</button>
+            <button class="btn btn-pagar" onclick="abrirModalPix()">Pagar Cartelas</button>
+        </div>
+    </div>
+
+    <!-- Modal PIX -->
+    <div class="modal-pix" id="modalPix">
+        <div class="modal-content">
+            <span class="close-modal" onclick="fecharModalPix()">&times;</span>
+            <h2>Pagamento via PIX</h2>
+            <div class="pix-container">
+                <div class="pix-valor" id="pixValor">Total a Pagar: R$ 0,00</div>
+                <p>Copie a chave PIX abaixo para realizar o pagamento:</p>
+                <div class="pix-chave">
+                    <span class="pix-numero" id="pixNumero">12345678900</span>
+                    <button class="copiar-pix" onclick="copiarPix()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        Copiar
+                    </button>
+                </div>
+                <div class="copied-message" id="copiedMessage">Chave PIX copiada!</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const escudosTimes = {
+            "Cruzeiro": "https://logodetimes.com/times/cruzeiro/logo-cruzeiro-256.png",
+            "Atlético-GO": "https://logodetimes.com/times/atletico-goianiense/logo-atletico-goianiense-256.png",
+            "América": "https://logodetimes.com/times/america-mineiro/logo-america-mineiro-256.png",
+            "Flamengo": "https://logodetimes.com/times/flamengo/logo-flamengo-256.png",
+            "Palmeiras": "https://logodetimes.com/times/palmeiras/logo-palmeiras-256.png",
+            "Corinthians": "https://logodetimes.com/times/corinthians/logo-corinthians-256.png",
+            "Grêmio": "https://logodetimes.com/times/gremio/logo-gremio-256.png",
+            "Internacional": "https://logodetimes.com/times/internacional/logo-internacional-256.png",
+            "São Paulo": "https://logodetimes.com/times/sao-paulo/logo-sao-paulo-256.png",
+            "Santos": "https://logodetimes.com/times/santos/logo-santos-256.png",
+            "Vasco": "https://logodetimes.com/times/vasco-da-gama/logo-vasco-da-gama-256.png",
+            "Botafogo": "https://logodetimes.com/times/botafogo/logo-botafogo-256.png",
+            "Fluminense": "https://logodetimes.com/times/fluminense/logo-fluminense-256.png",
+            "Bahia": "https://logodetimes.com/times/bahia/logo-bahia-256.png",
+            "Atlético-MG": "https://logodetimes.com/times/atletico-mineiro/logo-atletico-mineiro-256.png",
+            "Fortaleza": "https://logodetimes.com/times/fortaleza/logo-fortaleza-256.png",
+            "Athletico-PR": "https://logodetimes.com/times/atletico-paranaense/logo-atletico-paranaense-256.png",
+            "Ceará": "https://logodetimes.com/times/ceara/logo-ceara-256.png",
+            "Coritiba": "https://logodetimes.com/times/coritiba/logo-coritiba-256.png",
+            "Goiás": "https://logodetimes.com/times/goias/logo-goias-esporte-clube-256.png"
+        };
+
+        function voltarParaApostas() {
+            window.location.href = "tela-usuario.html";
+        }
+
+        function getTimeFromJogo(jogo) {
+            return jogo.split(" vs ");
+        }
+
+        function abrirModalPix() {
+            const modal = document.getElementById('modalPix');
+            const totalValor = document.getElementById('valor-total').innerText;
+            document.getElementById('pixValor').innerText = totalValor;
+            modal.style.display = 'flex';
+        }
+
+        function fecharModalPix() {
+            const modal = document.getElementById('modalPix');
+            modal.style.display = 'none';
+            document.getElementById('copiedMessage').style.display = 'none';
+        }
+
+        async function copiarPix() {
+            const pixNumero = document.getElementById('pixNumero').innerText;
+            try {
+                await navigator.clipboard.writeText(pixNumero);
+                const copiedMessage = document.getElementById('copiedMessage');
+                copiedMessage.style.display = 'block';
+                setTimeout(() => {
+                    copiedMessage.style.display = 'none';
+                }, 2000);
+            } catch (err) {
+                alert('Erro ao copiar a chave PIX. Por favor, tente copiar manualmente.');
+            }
+        }
+
+        async function carregarApostas() {
+            try {
+                const token = localStorage.getItem("token");
+
+                if (!token) {
+                    alert("Você precisa estar logado para visualizar suas apostas.");
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                // Usando a rota da API no Vercel
+                const response = await fetch("/api/minhas-apostas", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || "Erro ao buscar apostas.");
+                }
+
+                const data = await response.json();
+                const container = document.getElementById("apostas-container");
+                container.innerHTML = "";
+
+                let totalGeral = 0;
+
+                if (data.apostas.length === 0) {
+                    container.innerHTML = `
+                        <div class="sem-apostas">
+                            <h3>Nenhuma aposta realizada ainda</h3>
+                            <p>Faça suas apostas para vê-las aqui!</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                data.apostas.forEach((aposta) => {
+                    const valorAposta = Number(aposta.valor_total) || 0;
+                    totalGeral += valorAposta;
+
+                    const apostaElement = document.createElement("div");
+                    apostaElement.className = "aposta-card";
+
+                    let jogosHTML = "";
+                    aposta.jogos.forEach((jogo, index) => {
+                        const [timeCasa, timeVisitante] = getTimeFromJogo(jogo);
+                        jogosHTML += `
+                            <div class="jogo-item">
+                                <div class="escudo">
+                                    <img src="${escudosTimes[timeCasa]}" alt="${timeCasa}">
+                                </div>
+                                <div class="jogo-info">
+                                    <div class="times">${timeCasa} vs ${timeVisitante}</div>
+                                    <div class="opcoes">Apostas: ${aposta.opcoes[index].join(", ")}</div>
+                                </div>
+                                <div class="escudo">
+                                    <img src="${escudosTimes[timeVisitante]}" alt="${timeVisitante}">
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    apostaElement.innerHTML = `
+                        <div class="aposta-header">
+                            <span class="aposta-id">Aposta #${aposta.id}</span>
+                            <span class="aposta-valor">R$ ${valorAposta.toFixed(2)}</span>
+                            <button class="btn btn-excluir" onclick="excluirAposta(${aposta.id})">Excluir</button>
+                        </div>
+                        <div class="jogos-container">
+                            ${jogosHTML}
+                        </div>
+                    `;
+
+                    container.appendChild(apostaElement);
+                });
+
+                document.getElementById("valor-total").innerText = `Total: R$ ${totalGeral.toFixed(2)}`;
+            } catch (error) {
+                console.error(error);
+                alert(error.message || "Erro ao carregar apostas.");
+            }
+        }
+
+        // Fechar modal ao clicar fora dele
+        window.onclick = function (event) {
+            const modal = document.getElementById('modalPix');
+            if (event.target == modal) {
+                fecharModalPix();
+            }
+        }
+
+        // Carregar apostas ao iniciar a página
+        carregarApostas();
+
+        // Exclui as apostas
+        async function excluirAposta(apostaId) {
+            const confirmar = confirm("Tem certeza que deseja excluir esta aposta?");
+            if (!confirmar) return;
+
+            try {
+                const token = localStorage.getItem("token");
+
+                if (!token) {
+                    alert("Você precisa estar logado para realizar esta ação.");
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                // Usando a rota da API no Vercel
+                const response = await fetch(`/api/apostas/${apostaId}`, {
+                    method: "DELETE",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || "Erro ao excluir aposta.");
+                }
+
+                alert("Aposta excluída com sucesso!");
+                carregarApostas(); // Recarrega as apostas após a exclusão
+            } catch (error) {
+                console.error(error);
+                alert(error.message || "Erro ao excluir aposta.");
+            }
+        }
+    </script>
+</body>
+
+</html>

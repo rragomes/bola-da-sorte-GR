@@ -6,10 +6,10 @@
       }
     ],
     "routes" [
-      {
-        "src": "/(.*)",
-        "dest": "/api/index.js"
-      }
-    ]
+  {
+    "src": "/(.*)",
+    "dest": "/api/index.js"
+  }
+]
   }
   

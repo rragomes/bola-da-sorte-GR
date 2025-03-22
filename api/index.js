@@ -35,10 +35,7 @@ const APOSTADOR_SECRET_KEY = process.env.APOSTADOR_SECRET_KEY;
 
 // Middleware
 // Configuração do CORS
-app.use(cors({
-    origin: ['bola-da-sorte-gr.vercel.app','http://localhost:3000'],
-    credentials: true
-  }));
+app.use(cors());
 
   
 app.use(bodyParser.json());
@@ -305,7 +302,7 @@ app.get("/minhas-apostas", autenticarJWT, (req, res) => {
 
 // Rota de cadastro
 app.post(
-    "/register",
+    "/api/register",
     [
         body("firstName").isLength({ min: 2 }).withMessage("O nome deve ter pelo menos 2 caracteres."),
         body("lastName").isLength({ min: 2 }).withMessage("O sobrenome deve ter pelo menos 2 caracteres."),
@@ -374,7 +371,7 @@ app.post(
 );
 
 // Rota de login modificada para usar sessões separadas
-app.post("/login", (req, res) => {
+app.post("/api/login", (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -476,7 +473,7 @@ app.post("/login", (req, res) => {
 });
 
 // Adicionar rota de logout
-app.post("/logout", autenticarJWT, (req, res) => {
+app.post("/api/logout", autenticarJWT, (req, res) => {
     const token = req.headers.authorization?.split(" ")[1];
     
     if (!token) {

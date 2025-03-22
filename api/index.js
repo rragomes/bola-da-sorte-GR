@@ -36,7 +36,7 @@ const APOSTADOR_SECRET_KEY = process.env.APOSTADOR_SECRET_KEY;
 // Middleware
 // Configuração do CORS
 app.use(cors({
-    origin: ['https://boladasorte.vercel.app', 'http://localhost:3000'],
+    origin: ['bola-da-sorte-gr.vercel.app','http://localhost:3000'],
     credentials: true
   }));
 

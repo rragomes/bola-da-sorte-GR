@@ -10,9 +10,7 @@
   "author": "",
   "license": "ISC",
   "description": "Sistema de gerenciamento de bolão",
-  "engines": {
-  "node": ">=16.0.0 <19.0.0"
-},
+
   "dependencies": {
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
